@@ -12,7 +12,8 @@ export const studentLogin = async (req, res) => {
   console.log(req.body);
   const errors = { usernameError: String, passwordError: String };
   try {
-    const existingStudent = await Student.findOne({ username });
+    const existingStudent = await Student.findOne({ stuId:username });
+    console.log(existingStudent);
     if (!existingStudent) {
       errors.usernameError = "Student doesn't exist.";
       return res.status(404).json(errors);
@@ -21,10 +22,10 @@ export const studentLogin = async (req, res) => {
       password,
       existingStudent.password
     );
-    // if (!isPasswordCorrect) {
-    //   errors.passwordError = "Invalid Credentials";
-    //   return res.status(404).json(errors);
-    // }
+    if (!isPasswordCorrect) {
+      errors.passwordError = "Invalid Credentials";
+      return res.status(404).json(errors);
+    }
 
     const token = jwt.sign(
       {
