@@ -9,9 +9,14 @@ import studentRoutes from './routes/studentRoutes.js'
 import facultyRoutes from './routes/facultyRoutes.js'
 const app = express()
 dotenv.config()
-app.use(bodyParser.json({ limit: '30mb', extended: true }))
-app.use(bodyParser.urlencoded({ limit: '30mb', extended: true }))
-app.use(cors())
+// app.use(bodyParser.json({ limit: '30mb', extended: true }))
+// app.use(bodyParser.urlencoded({ limit: '30mb', extended: true }))
+
+app.use(cors({
+    origin: 'https://nstu-result-client.vercel.app',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  }));
 app.use('/api/admin', adminRoutes)
 app.use('/api/faculty', facultyRoutes)
 app.use('/api/student', studentRoutes)

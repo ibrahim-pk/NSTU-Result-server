@@ -11,7 +11,7 @@ export const facultyLogin = async (req, res) => {
     const { username, password } = req.body
     const errors = { usernameError: String, passwordError: String }
     try {
-        const existingFaculty = await Faculty.findOne({ username })
+        const existingFaculty = await Faculty.findOne({ email:username })
         if (!existingFaculty) {
             errors.usernameError = "Faculty doesn't exist."
             return res.status(404).json(errors)
@@ -20,10 +20,10 @@ export const facultyLogin = async (req, res) => {
             password,
             existingFaculty.password
         )
-        // if (!isPasswordCorrect) {
-        //   errors.passwordError = "Invalid Credentials";
-        //   return res.status(404).json(errors);
-        // }
+        if (!isPasswordCorrect) {
+          errors.passwordError = "Invalid Credentials";
+          return res.status(404).json(errors);
+        }
 
         const token = jwt.sign(
             {
@@ -181,15 +181,17 @@ export const getTest = async (req, res) => {
 
 export const getStudent = async (req, res) => {
     try {
-        const { department, year, section } = req.body
+        const { department,batch,year,section } = req.body
+        console.log(req.body);
         const errors = { noStudentError: String }
-        const students = await Student.find({ department, year, section })
+        const students = await Student.find({department,batch})
+        const subject = await Subject.find({year,term:section})
         if (students.length === 0) {
             errors.noStudentError = 'No Student Found'
             return res.status(404).json(errors)
         }
 
-        res.status(200).json({ result: students })
+        res.status(200).json({ result: students,subject:subject })
     } catch (error) {
         const errors = { backendError: String }
         errors.backendError = error

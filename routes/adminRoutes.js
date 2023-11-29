@@ -26,6 +26,9 @@ import {
     createNotice,
     getNotice,
     adminRegister,
+    addUfaculty,
+    deletetUfaculty,
+    getAllUfaculty,
 } from '../controller/adminController.js'
 const router = express.Router()
 router.post('/login', adminLogin)
@@ -40,6 +43,8 @@ router.get('/getalladmin', auth, getAllAdmin)
 router.post('/updateprofile', auth, updateAdmin)
 router.post('/addadmin', auth, addAdmin)
 router.post('/adddepartment', auth, addDepartment)
+router.post('/add/ufaculty', auth, addUfaculty)
+router.get('/get/ufaculty', auth, getAllUfaculty)
 router.post('/addfaculty', auth, addFaculty)
 router.post('/getfaculty', auth, getFaculty)
 router.post('/addsubject', auth, addSubject)
@@ -49,6 +54,7 @@ router.post('/getstudent', auth, getStudent)
 router.post('/getnotice', auth, getNotice)
 router.post('/getadmin', auth, getAdmin)
 router.post('/deleteadmin', auth, deleteAdmin)
+router.post('/delete/ufaculty', auth, deletetUfaculty)
 router.post('/deletefaculty', auth, deleteFaculty)
 router.post('/deletestudent', auth, deleteStudent)
 router.post('/deletedepartment', auth, deleteDepartment)

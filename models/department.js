@@ -5,6 +5,10 @@ const departmentSchema = mongoose.Schema({
         type: String,
         required: true,
     },
+    ufaculty: {
+        type: String,
+        required: true,
+    },
     departmentCode: {
         type: String,
         required: true,

@@ -6,6 +6,7 @@ import Subject from "../models/subject.js";
 import Notice from "../models/notice.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
+import Ufaculty from '../models/ufaculty.js'
 
 export const adminLogin = async (req, res) => {
   //console.log('login',req.body)
@@ -239,7 +240,7 @@ export const createNotice = async (req, res) => {
 export const addDepartment = async (req, res) => {
   try {
     const errors = { departmentError: String };
-    const { department } = req.body;
+    const { department,ufaculty } = req.body;
     const existingDepartment = await Department.findOne({ department });
     if (existingDepartment) {
       errors.departmentError = "Department already added";
@@ -256,6 +257,7 @@ export const addDepartment = async (req, res) => {
 
     const newDepartment = await new Department({
       department,
+      ufaculty,
       departmentCode,
     });
 
@@ -271,6 +273,84 @@ export const addDepartment = async (req, res) => {
     res.status(500).json(errors);
   }
 };
+
+export const addUfaculty = async (req, res) => {
+  try {
+    const errors = { departmentError: String };
+    const { ufaculty } = req.body;
+   // console.log(ufaculty);
+
+    const existingFaculty = await Ufaculty.findOne({ ufaculty });
+    if (existingFaculty) {
+      errors.departmentError = "Faculty already added";
+      return res.status(400).json(errors);
+    }
+    const faculty = await Ufaculty.find({});
+    let add = faculty.length + 1;
+    let ufacultyCode;
+    if (add < 9) {
+      ufacultyCode = "0" + add.toString();
+    } else {
+      ufacultyCode = add.toString();
+    }
+
+    const newFaculty = await new Ufaculty({
+      ufaculty,
+      ufacultyCode,
+    });
+
+    await newFaculty.save();
+    return res.status(200).json({
+      success: true,
+      msg: "Faculty added successfully",
+      response: newFaculty,
+    });
+    
+  } catch (error) {
+    const errors = { backendError: String };
+    errors.backendError = error;
+    return res.status(200).json({
+      success: false,
+      error: errors,
+      response: {},
+    });
+  }
+};
+
+export const deletetUfaculty = async (req, res) => {
+  try {
+    const { ufaculty } = req.body;
+
+    await Ufaculty.findOneAndDelete({ ufaculty });
+    res.status(200).json({ 
+      success:true,
+      msg: "Faculty Deleted" 
+    });
+  } catch (error) {
+    const errors = { backendError: String };
+    errors.backendError = error;
+    res.status(200).json({ success:false,error:errors });
+  }
+};
+
+export const getAllUfaculty = async (req, res) => {
+  try {
+   
+   const allFuclty= await Ufaculty.find({  });
+
+    res.status(200).json({ faculty:allFuclty });
+  } catch (error) {
+    const errors = { backendError: String };
+    errors.backendError = error;
+    res.status(500).json(errors);
+  }
+};
+
+
+
+
+
+
 
 export const addFaculty = async (req, res) => {
   try {
@@ -310,7 +390,7 @@ export const addFaculty = async (req, res) => {
     let hashedPassword;
     const newDob = dob.split("-").reverse().join("-");
 
-    hashedPassword = await bcrypt.hash(newDob, 10);
+    hashedPassword = await bcrypt.hash("123456A@", 10);
     var passwordUpdated = false;
 
     const newFaculty = await new Faculty({
@@ -423,11 +503,13 @@ export const addSubject = async (req, res) => {
 };
 
 export const getSubject = async (req, res) => {
+   //console.log(req.body)
   try {
     const { department, year, term } = req.body;
 
-    if (!req.userId) return res.json({ message: "Unauthenticated" });
-    const errors = { noSubjectError: String };
+    // if (!req.userId)
+    //  return res.json({ message: "Unauthenticated" });
+    // const errors = { noSubjectError: String };
 
     const subjects = await Subject.find({ department, year, term });
     if (subjects.length === 0) {
@@ -510,6 +592,7 @@ export const deleteStudent = async (req, res) => {
   }
 };
 export const deleteSubject = async (req, res) => {
+  console.log(req.body)
   try {
     const subjects = req.body;
     const errors = { noSubjectError: String };
@@ -539,6 +622,11 @@ export const deleteDepartment = async (req, res) => {
     res.status(500).json(errors);
   }
 };
+
+
+
+
+
 
 export const addStudent = async (req, res) => {
   try {
