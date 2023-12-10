@@ -181,17 +181,18 @@ export const getTest = async (req, res) => {
 
 export const getStudent = async (req, res) => {
     try {
-        const { department,batch,year,section } = req.body
+        const { department,batch,year,section,id,courseCode} = req.body
         console.log(req.body);
         const errors = { noStudentError: String }
-        const students = await Student.find({department,batch})
+        const students = await Student.find({department,batch,stuId:id})
         const subject = await Subject.find({year,term:section})
+        const rslt = await Test.find({department,year,term:section,id,code:courseCode})
         if (students.length === 0) {
             errors.noStudentError = 'No Student Found'
             return res.status(404).json(errors)
         }
 
-        res.status(200).json({ result: students,subject:subject })
+        res.status(200).json({ result: students,subject:subject,rslt:rslt })
     } catch (error) {
         const errors = { backendError: String }
         errors.backendError = error
@@ -201,37 +202,42 @@ export const getStudent = async (req, res) => {
 
 export const uploadMarks = async (req, res) => {
     try {
-        const { department, year, section, test, marks } = req.body
-
-        const errors = { examError: String }
-        const existingTest = await Test.findOne({
-            department,
-            year,
-            section,
-            test,
-        })
-        const isAlready = await Marks.find({
-            exam: existingTest._id,
-        })
-
-        if (isAlready.length !== 0) {
-            errors.examError = 'You have already uploaded marks of given exam'
-            return res.status(400).json(errors)
+        const {name,fristEx,secondEx,ThirdEx,CtAtt,department,year,term,id,code} = req.body
+        console.log(req.body)
+        const exitsResult=await Test.find({id,code,year,term})
+        const query = {
+            $and: [
+              { id: id },
+              { code: code},
+              { year: year},
+              { term: term},
+              // Add more conditions as needed
+            ],
+          };
+        if(exitsResult){
+            const update = {
+                $set: {
+                  fristEx:fristEx,
+                  secondEx:secondEx,
+                  ThirdEx:ThirdEx,
+                  CtAtt:CtAtt,
+                  // ...
+                },
+              };
+            await Test.updateOne(query, update);
+           return res.status(200).json({ message: 'Marks updated successfully' })
+        }else{
+            const markUpload = await new Test(req.body)
+            const savedata=  await markUpload.save()
+            res.status(200).json({ message: 'Marks uploaded successfully' })
         }
-
-        for (var i = 0; i < marks.length; i++) {
-            const newMarks = await new Marks({
-                student: marks[i]._id,
-                exam: existingTest._id,
-                marks: marks[i].value,
-            })
-            await newMarks.save()
-        }
-        res.status(200).json({ message: 'Marks uploaded successfully' })
+        
+        
     } catch (error) {
         const errors = { backendError: String }
         errors.backendError = error
-        res.status(500).json(errors)
+        console.log(errors)
+        res.status(200).json(errors)
     }
 }
 

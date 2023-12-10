@@ -1,12 +1,11 @@
 import mongoose from 'mongoose'
 
 const testSchema = mongoose.Schema({
-    test: {
+    name: {
         type: String,
-        required: true,
-        trim: true,
+        required: true
     },
-    subjectCode: {
+    id: {
         type: String,
         required: true,
     },
@@ -14,22 +13,33 @@ const testSchema = mongoose.Schema({
         type: String,
         required: true,
     },
-    totalMarks: {
-        type: Number,
-        default: 10,
-    },
     year: {
         type: String,
-        required: true,
     },
-    section: {
+    term: {
         type: String,
         required: true,
     },
-    date: {
+    code: {
         type: String,
         required: true,
     },
+    fristEx: {
+        type: String,
+        required: true,
+    },
+    secondEx: {
+        type: String,
+        required: true,
+    },
+    ThirdEx: {
+        type: String,
+        required: true,
+    },
+    CtAtt: {
+        type: String,
+        required: true,
+    }
 })
 
 export default mongoose.model('test', testSchema)
