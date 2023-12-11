@@ -26,19 +26,19 @@ const testSchema = mongoose.Schema({
     },
     fristEx: {
         type: String,
-        required: true,
+        
     },
     secondEx: {
         type: String,
-        required: true,
+        
     },
     ThirdEx: {
         type: String,
-        required: true,
+        
     },
     CtAtt: {
         type: String,
-        required: true,
+        
     }
 })
 

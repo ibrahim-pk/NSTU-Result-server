@@ -203,14 +203,16 @@ export const getStudent = async (req, res) => {
 export const uploadMarks = async (req, res) => {
     try {
         const {name,fristEx,secondEx,ThirdEx,CtAtt,department,year,term,id,code} = req.body
-        console.log(req.body)
-        const exitsResult=await Test.find({id,code,year,term})
+       // console.log(req.body)
+        const exitsResult=await Test.findOne({id,code,year,term,department})
+        console.log("exist:",exitsResult);
         const query = {
             $and: [
               { id: id },
               { code: code},
               { year: year},
               { term: term},
+              { department: department}
               // Add more conditions as needed
             ],
           };
@@ -225,10 +227,11 @@ export const uploadMarks = async (req, res) => {
                 },
               };
             await Test.updateOne(query, update);
-           return res.status(200).json({ message: 'Marks updated successfully' })
+           res.status(200).json({ message: 'Marks updated successfully' })
         }else{
             const markUpload = await new Test(req.body)
             const savedata=  await markUpload.save()
+            console.log("marks:",savedata);
             res.status(200).json({ message: 'Marks uploaded successfully' })
         }
         
