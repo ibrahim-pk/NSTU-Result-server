@@ -180,19 +180,30 @@ export const getTest = async (req, res) => {
 }
 
 export const getStudent = async (req, res) => {
+   // console.log(object);
     try {
         const { department,batch,year,section,id,courseCode} = req.body
         console.log(req.body);
         const errors = { noStudentError: String }
-        const students = await Student.find({department,batch,stuId:id})
+        let students
+        if(id){
+          students = await Student.find({department,batch,stuId:id})
+        }else{
+            students = await Student.find({department,batch})
+        }
+        
         const subject = await Subject.find({year,term:section})
-        const rslt = await Test.find({department,year,term:section,id,code:courseCode})
+        const rslt = await Test.find({department,year,term:section,code:courseCode})
+        
+        console.log("code:",{department,year,term:section,id,code:courseCode});
+        console.log("amar result",rslt);
         if (students.length === 0) {
             errors.noStudentError = 'No Student Found'
             return res.status(404).json(errors)
+        }else{
+            res.status(200).json({ result: students,subject:subject,rslt:rslt })
         }
 
-        res.status(200).json({ result: students,subject:subject,rslt:rslt })
     } catch (error) {
         const errors = { backendError: String }
         errors.backendError = error
@@ -200,10 +211,47 @@ export const getStudent = async (req, res) => {
     }
 }
 
+//calculate result in  routes file
+
+
+
+
+// export const getResult = async (req, res) => {
+//     // console.log(object);
+//      try {
+//          const { department,batch,year,section,id,courseCode} = req.body
+//          console.log(req.body);
+//          const errors = { noStudentError: String }
+//          let students
+//          if(id){
+//            students = await Student.find({department,batch,stuId:id})
+//          }else{
+//              students = await Student.find({department,batch})
+//          }
+         
+//          const subject = await Subject.find({year,term:section})
+//          const rslt = await Test.find({department,year,term:section,code:courseCode})
+         
+//          console.log("code:",{department,year,term:section,id,code:courseCode});
+//          console.log("amar result",rslt);
+//          if (students.length === 0) {
+//              errors.noStudentError = 'No Student Found'
+//              return res.status(404).json(errors)
+//          }else{
+//              res.status(200).json({ result: students,subject:subject,rslt:rslt })
+//          }
+ 
+//      } catch (error) {
+//          const errors = { backendError: String }
+//          errors.backendError = error
+//          res.status(500).json(errors)
+//      }
+//  }
+
 export const uploadMarks = async (req, res) => {
     try {
         const {name,fristEx,secondEx,ThirdEx,CtAtt,department,year,term,id,code} = req.body
-       // console.log(req.body)
+        console.log("info:",req.body)
         const exitsResult=await Test.findOne({id,code,year,term,department})
         console.log("exist:",exitsResult);
         const query = {
@@ -219,14 +267,15 @@ export const uploadMarks = async (req, res) => {
         if(exitsResult){
             const update = {
                 $set: {
-                  fristEx:fristEx,
-                  secondEx:secondEx,
-                  ThirdEx:ThirdEx,
-                  CtAtt:CtAtt,
+                  fristEx:fristEx || exitsResult.fristEx,
+                  secondEx:secondEx || exitsResult.secondEx,
+                  ThirdEx:ThirdEx || exitsResult.ThirdEx,
+                //   ThirdEx:((parseInt(exitsResult.fristEx) + parseInt(exitsResult.secondEx)) /2).toFixed(2),
+                  CtAtt:CtAtt || exitsResult.CtAtt,
                   // ...
                 },
-              };
-            await Test.updateOne(query, update);
+              }
+             await Test.updateOne(query, update);
            res.status(200).json({ message: 'Marks updated successfully' })
         }else{
             const markUpload = await new Test(req.body)

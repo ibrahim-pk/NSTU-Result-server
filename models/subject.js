@@ -14,9 +14,12 @@ const subjectSchema = new Schema({
     type: String,
     required: true,
   },
+  degree: {
+    type: String
+  },
   totalLectures: {
     type: Number,
-    default: 10,
+    default: 20,
   },
   year: {
     type: String,

@@ -426,7 +426,7 @@ export const getFaculty = async (req, res) => {
     const errors = { noFacultyError: String };
     const faculties = await Faculty.find({ department });
     if (faculties.length === 0) {
-      errors.noFacultyError = "No Faculty Found";
+      errors.noFacultyError = "No Teachers Found";
       return res.status(404).json(errors);
     }
     res.status(200).json({ result: faculties });
@@ -463,6 +463,7 @@ export const addSubject = async (req, res) => {
       term,
       credit,
       creditHour,
+      degree
     } = req.body;
     const errors = { subjectError: String };
     const subject = await Subject.findOne({ subjectCode });
@@ -480,6 +481,7 @@ export const addSubject = async (req, res) => {
       term,
       credit,
       creditHour,
+      degree
     });
 
     await newSubject.save();
@@ -505,22 +507,20 @@ export const addSubject = async (req, res) => {
 export const getSubject = async (req, res) => {
    //console.log(req.body)
   try {
-    const { department, year, term } = req.body;
-
+    const { department, year, term,degree } = req.body;
+      //console.log(req.body);
     // if (!req.userId)
     //  return res.json({ message: "Unauthenticated" });
     // const errors = { noSubjectError: String };
 
-    const subjects = await Subject.find({ department, year, term });
-    if (subjects.length === 0) {
-      errors.noSubjectError = "No Subject Found";
-      return res.status(404).json(errors);
-    }
-    res.status(200).json({ result: subjects });
+    const subjects = await Subject.find({ degree,department, year, term });
+    //console.log(subjects);
+      res.status(200).send({ result: subjects });
+    
+   
   } catch (error) {
-    const errors = { backendError: String };
-    errors.backendError = error;
-    res.status(500).json(errors);
+    console.log(error.message);
+    res.status(200).json({err:error.message});
   }
 };
 
@@ -702,9 +702,16 @@ export const addStudent = async (req, res) => {
 
 export const getStudent = async (req, res) => {
   try {
-    const { department, batch } = req.body;
+    const { department, batch,stuId } = req.body;
     const errors = { noStudentError: String };
-    const students = await Student.find({ department, batch });
+    let students
+    if(stuId){
+       students = await Student.find({ department, batch,stuId});
+    }
+    else{
+      students = await Student.find({ department, batch});
+    }
+   
 
     if (students.length === 0) {
       errors.noStudentError = "No Student Found";

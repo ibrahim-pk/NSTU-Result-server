@@ -20,24 +20,36 @@ const testSchema = mongoose.Schema({
         type: String,
         required: true,
     },
+    subTitle: {
+        type: String,
+    },
     code: {
         type: String,
         required: true,
     },
+    credit: {
+        type: String,
+        
+    },
     fristEx: {
         type: String,
+        default: "0"
+        
         
     },
     secondEx: {
         type: String,
+        default: "0"
         
     },
     ThirdEx: {
         type: String,
+        default: "0"
         
     },
     CtAtt: {
         type: String,
+        default: "0"
         
     }
 })

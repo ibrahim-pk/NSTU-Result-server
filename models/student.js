@@ -33,6 +33,9 @@ const studentSchema = new Schema({
   gender: {
     type: String,
   },
+  degree: {
+    type: String,
+  },
   fatherName: {
     type: String,
   },
@@ -44,8 +47,7 @@ const studentSchema = new Schema({
     required: true,
   },
   stuId: {
-    type: String,
-    required: true,
+    type: String
   },
   batch: {
     type: String,
