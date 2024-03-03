@@ -514,7 +514,7 @@ export const getSubject = async (req, res) => {
     // const errors = { noSubjectError: String };
 
     const subjects = await Subject.find({ degree,department, year, term });
-    //console.log(subjects);
+   // console.log(subjects);
       res.status(200).send({ result: subjects });
     
    
