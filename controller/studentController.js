@@ -12,7 +12,7 @@ export const studentLogin = async (req, res) => {
   console.log(req.body);
   const errors = { usernameError: String, passwordError: String };
   try {
-    const existingStudent = await Student.findOne({ stuId:username });
+    const existingStudent = await Student.findOne({ email:username });
     console.log(existingStudent);
     if (!existingStudent) {
       errors.usernameError = "Student doesn't exist.";
