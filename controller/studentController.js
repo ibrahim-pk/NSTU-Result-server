@@ -72,6 +72,24 @@ export const updatedPassword = async (req, res) => {
   }
 };
 
+export const resetPassword=async(req,res)=>{
+  const {email,stuId}=req.body
+  const existingStudent = await Student.findOne({ email:email,stuId:stuId});
+  if (existingStudent) {
+    let hashedPassword;
+    const newPass = "C123456@";
+    hashedPassword = await bcrypt.hash(newPass, 10);
+    const result = await Student.updateOne(
+      { email:email },
+      { $set: { password: hashedPassword } });
+     res.status(200).json({data:"Reset Password Successfully"})
+  
+  }else{
+    res.status(200).json({data:"User Not Found"})
+  }
+}
+
+
 export const updateStudent = async (req, res) => {
   try {
     const {

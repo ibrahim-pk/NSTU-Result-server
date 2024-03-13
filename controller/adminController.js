@@ -700,6 +700,9 @@ export const addStudent = async (req, res) => {
   }
 };
 
+
+
+
 export const getStudent = async (req, res) => {
   try {
     const { department, batch,stuId } = req.body;
@@ -761,8 +764,8 @@ export const getAllDepartment = async (req, res) => {
 };
 export const getAllSubject = async (req, res) => {
   try {
-    const subjects = await Subject.find();
-    res.status(200).json(subjects);
+    const subjects = await Subject.find({});
+    res.status(200).json({subject:subjects});
   } catch (error) {
     console.log("Backend Error", error);
   }
